@@ -20,7 +20,7 @@
 ---
 
 ## 🔗 Quick Attribution (Credit)
-## JSON DATA URL - (https://raw.githubusercontent.com/drmlive/fancode-live-events/refs/heads/main/fancode.json)
+## JSON DATA URL -  [@DATA] (https://raw.githubusercontent.com/drmlive/fancode-live-events/refs/heads/main/fancode.json)
 
 This automated service is based on data collected and maintained by others. Full credit goes to the original source:
 
