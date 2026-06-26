@@ -6,7 +6,6 @@
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/beyondsense-lab/Beyond-lab/refs/heads/main/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2012_05_20%20AM.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -132,35 +131,44 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.7);
     }
 
-    /* Aspect-ratio wrapper — Shaka container sits INSIDE this naturally */
+    /* Aspect-ratio wrapper gives the player its 16:9 shape */
     .video-aspect {
       position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
       background: #000;
       border-radius: 1rem;
-      overflow: hidden; /* clip video, not the controls */
+      overflow: hidden;
     }
 
-    /* Shaka needs to fill the aspect wrapper and be the hover target */
+    /* Shaka container fills the aspect wrapper — must NOT be absolute (would collapse to 0) */
     #shakaContainer {
-      position: absolute;
-      inset: 0;
       width: 100%;
       height: 100%;
+      display: block;
+      position: relative;
     }
 
-    /* Ensure Shaka's own controls container is on top and gets pointer events */
+    /* Video element must fill its Shaka container */
+    #shakaContainer video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #000;
+      object-fit: contain;
+    }
+
+    /* Controls layer sits on top with pointer events */
     .shaka-video-container .shaka-controls-container {
       pointer-events: auto !important;
       z-index: 10 !important;
     }
 
-    /* The gradient scrim Shaka adds should also pass pointer events through */
     .shaka-video-container .shaka-scrim-container {
       pointer-events: none !important;
     }
 
+    /* Bare video fallback */
     video {
       width: 100%;
       height: 100%;
