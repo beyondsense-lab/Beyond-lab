@@ -158,14 +158,9 @@
       object-fit: contain;
     }
 
-    /* Controls layer sits on top with pointer events */
+    /* Controls layer sits on top with proper pointer events handling via Shaka */
     .shaka-video-container .shaka-controls-container {
-      pointer-events: auto !important;
       z-index: 10 !important;
-    }
-
-    .shaka-video-container .shaka-scrim-container {
-      pointer-events: none !important;
     }
 
     /* Bare video fallback */
@@ -597,7 +592,6 @@
 </head>
 <body>
 
-  <!-- HEADER -->
   <header class="player-header">
     <a href="/" class="back-btn">
       <i class="fas fa-chevron-left" style="font-size:0.75rem"></i> Back
@@ -609,13 +603,11 @@
     </a>
   </header>
 
-  <!-- PAGE -->
   <div class="page-wrap">
 
-    <!-- ── PLAYER ── -->
     <div class="player-section" id="player-section">
       <div class="video-aspect">
-        <div class="shaka-video-container youtube-theme" id="shakaContainer" data-shaka-player>
+        <div class="shaka-video-container youtube-theme" id="shakaContainer">
           <video id="video" autoplay muted playsinline preload="auto"></video>
         </div>
       </div>
@@ -625,7 +617,6 @@
       </div>
     </div>
 
-    <!-- PLAYER BAR -->
     <div class="player-bar" id="player-bar">
       <div class="pb-left">
         <span class="live-badge"><span class="pdot"></span>LIVE</span>
@@ -636,23 +627,19 @@
       </button>
     </div>
 
-    <!-- ── MATCH LIST ── -->
     <div class="section-header">
       <h2 class="section-title">More <span>Matches</span></h2>
       <span class="live-pill" id="live-pill">Loading…</span>
     </div>
 
     <div class="match-list" id="match-list">
-      <!-- skeletons -->
       <div class="mini-skel"><div class="skel-pulse skel-img-mini"></div><div class="skel-body-mini"><div class="skel-line-mini skel-pulse w-35"></div><div class="skel-line-mini skel-pulse w-75"></div><div class="skel-line-mini skel-pulse w-50"></div></div></div>
       <div class="mini-skel"><div class="skel-pulse skel-img-mini"></div><div class="skel-body-mini"><div class="skel-line-mini skel-pulse w-35"></div><div class="skel-line-mini skel-pulse w-75"></div><div class="skel-line-mini skel-pulse w-50"></div></div></div>
       <div class="mini-skel"><div class="skel-pulse skel-img-mini"></div><div class="skel-body-mini"><div class="skel-line-mini skel-pulse w-35"></div><div class="skel-line-mini skel-pulse w-75"></div><div class="skel-line-mini skel-pulse w-50"></div></div></div>
       <div class="mini-skel"><div class="skel-pulse skel-img-mini"></div><div class="skel-body-mini"><div class="skel-line-mini skel-pulse w-35"></div><div class="skel-line-mini skel-pulse w-75"></div><div class="skel-line-mini skel-pulse w-50"></div></div></div>
     </div>
 
-  </div><!-- /page-wrap -->
-
-  <script>
+  </div><script>
     /* ─────────────────────────────────────────────
        CONFIG
     ───────────────────────────────────────────── */
