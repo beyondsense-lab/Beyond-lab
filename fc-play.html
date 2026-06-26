@@ -6,7 +6,6 @@
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/beyondsense-lab/Beyond-lab/refs/heads/main/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2012_05_20%20AM.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -126,27 +125,44 @@
       width: 100%;
       background: #000;
       border-radius: 1rem;
-      overflow: hidden;
+      /* No overflow:hidden — it clips Shaka's control menus */
       position: relative;
       border: 1px solid rgba(232,0,61,0.12);
       box-shadow: 0 8px 40px rgba(0,0,0,0.7);
     }
 
+    /* Aspect-ratio wrapper — Shaka container sits INSIDE this naturally */
     .video-aspect {
       position: relative;
       width: 100%;
-      padding-top: 56.25%; /* 16:9 */
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 1rem;
+      overflow: hidden; /* clip video, not the controls */
     }
 
-    .shaka-video-container,
-    .video-aspect video {
+    /* Shaka needs to fill the aspect wrapper and be the hover target */
+    #shakaContainer {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
     }
 
+    /* Ensure Shaka's own controls container is on top and gets pointer events */
+    .shaka-video-container .shaka-controls-container {
+      pointer-events: auto !important;
+      z-index: 10 !important;
+    }
+
+    /* The gradient scrim Shaka adds should also pass pointer events through */
+    .shaka-video-container .shaka-scrim-container {
+      pointer-events: none !important;
+    }
+
     video {
+      width: 100%;
+      height: 100%;
       background: #000;
       display: block;
     }
@@ -534,8 +550,6 @@
 
     /* ── ERROR STATE ── */
     .player-error {
-      position: absolute;
-      inset: 0;
       display: none;
       flex-direction: column;
       align-items: center;
@@ -543,6 +557,8 @@
       gap: 1rem;
       background: #000;
       color: var(--text-sub);
+      padding: 3rem 1rem;
+      border-radius: 0 0 1rem 1rem;
     }
 
     .player-error.visible { display: flex; }
@@ -593,10 +609,10 @@
         <div class="shaka-video-container youtube-theme" id="shakaContainer" data-shaka-player>
           <video id="video" autoplay muted playsinline preload="auto"></video>
         </div>
-        <div class="player-error" id="player-error">
-          <i class="fas fa-exclamation-triangle"></i>
-          <p>Stream unavailable. Try another match.</p>
-        </div>
+      </div>
+      <div class="player-error" id="player-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Stream unavailable. Try another match.</p>
       </div>
     </div>
 
@@ -661,11 +677,16 @@
 
       try {
         if (!player) {
+          // Install polyfills first
+          shaka.polyfill.installAll();
+
           player = new shaka.Player();
           await player.attach(video);
 
-          const container = document.getElementById('shakaContainer');
-          const ui        = new shaka.ui.Overlay(player, container, video);
+          const shakaContainer = document.getElementById('shakaContainer');
+
+          // Build the UI overlay — container must be the shaka-video-container div
+          const ui = new shaka.ui.Overlay(player, shakaContainer, video);
 
           ui.configure({
             seekBarColors: {
@@ -673,6 +694,8 @@
               buffered: 'rgba(255,255,255,.4)',
               played:   '#e8003d'
             },
+            addSeekBar: true,
+            addBigPlayButton: true,
             controlPanelElements: [
               'play_pause', 'mute', 'time_and_duration', 'restart',
               'spacer', 'quality', 'language', 'picture_in_picture',
@@ -706,8 +729,10 @@
 
       } catch (err) {
         console.error('Player error:', err);
+        // Fallback to native video
         video.src = url;
         video.autoplay = true;
+        video.controls = true;
         video.muted = false;
         try { await video.play(); } catch { video.muted = true; await video.play(); }
       }
